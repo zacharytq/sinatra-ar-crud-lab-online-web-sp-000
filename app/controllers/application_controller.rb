@@ -25,12 +25,36 @@ class ApplicationController < Sinatra::Base
 
   post "/articles" do
     id = Article.create(params).id
-    redirect "/articles/show/#{id.to_s}"
+    redirect "/articles/#{id.to_s}"
   end
 
-  get "/articles/show/:id" do
+  get "/articles/:id" do
     @post = Article.find(params["id"])
     erb :show
   end
+
+  get "/articles/:id/edit" do
+    @post = Article.find(params["id"])
+    erb :edit
+  end
+
+  patch '/articles/:id' do
+    id = params["id"]
+    new_params = {}
+    old_post = Article.find(id)
+    new_params[:title] = params["title"]
+    new_params[:content] = params["content"]
+    old_post.update(new_params)
+
+    redirect "/articles/#{id}"
+  end
+
+  delete '/articles/:id/delete' do
+    @post = Article.find(params["id"])
+    @post.destroy
+    erb :delete
+  end
+
+
 
 end
